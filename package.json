@@ -1,0 +1,31 @@
+{
+  "name": "framer-svg-component-generator",
+  "version": "0.0.1",
+  "main": "build/index.js",
+  "author": "Iain Kettles <iain@framer.com>",
+  "license": "MIT",
+  "bin": {
+    "framer-svg-component-generator": "./build/index.js"
+  },
+  "dependencies": {
+    "fs-extra": "^8.1.0",
+    "glob": "^7.1.6",
+    "svg-to-jsx": "^1.0.2",
+    "svgson": "^4.0.0",
+    "yargs": "^15.1.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^8.0.1",
+    "@types/node": "^12.12.17",
+    "@types/xml-formatter": "^1.1.0",
+    "@types/yargs": "^13.0.4",
+    "tsc-watch": "^4.0.0",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.3"
+  },
+  "scripts": {
+    "build": "./scripts/build",
+    "develop": "./scripts/develop",
+    "prepublish": "yarn build"
+  }
+}
