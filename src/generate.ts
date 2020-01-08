@@ -23,7 +23,14 @@ export default async function(inputPath: string, outputPath: string) {
 
   fs.writeFileSync(
     `${outputPath}/schema.json`,
-    JSON.stringify(output, null, 2)
+    JSON.stringify(
+      output.map(definition => {
+        const { svg, ...rest } = definition;
+        return rest;
+      }),
+      null,
+      2
+    )
   );
 
   await generateComponents(output, outputPath);
