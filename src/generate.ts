@@ -1,4 +1,5 @@
 import * as fs from 'fs-extra';
+import * as glob from 'glob';
 import generateComponents from './generate-components';
 import generateSvgDefinition from './generate-svg-definition';
 
@@ -7,18 +8,15 @@ export default async function(inputPath: string, outputPath: string) {
     throw new Error(`Input path does not exist`);
   }
 
-  const svgFileNames = (fs.readdirSync(inputPath) as string[]).filter(
-    name => name !== '.DS_Store'
-  );
-
+  const filePaths = glob.sync(`${inputPath}/**/*.svg`);
   const output: SvgDefinition[] = [];
 
-  for (const filename of svgFileNames) {
-    const svg = fs.readFileSync(`${inputPath}/${filename}`, 'utf8');
+  for (const filePath of filePaths) {
+    const svg = fs.readFileSync(`${filePath}`, 'utf8');
     try {
-      output.push(await generateSvgDefinition(filename, svg));
+      output.push(await generateSvgDefinition(filePath, svg));
     } catch (err) {
-      console.error(`Failed to parse ${filename}`, err);
+      console.error(`Failed to parse ${filePath}`, err);
       throw err;
     }
   }
@@ -37,5 +35,5 @@ export default async function(inputPath: string, outputPath: string) {
     )
   );
 
-  await generateComponents(output, outputPath);
+  await generateComponents(output, inputPath, outputPath);
 }

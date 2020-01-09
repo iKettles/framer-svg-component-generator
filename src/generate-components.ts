@@ -3,8 +3,14 @@ import * as svgToJsx from 'svg-to-jsx';
 
 const utilsPath = `utils`;
 
-export default async function(svgs: SvgDefinition[], outputPath: string) {
-  console.log(`Generating components for ${svgs.length} svgs to ${outputPath}`);
+export default async function(
+  svgs: SvgDefinition[],
+  inputPath: string,
+  outputPath: string
+) {
+  console.log(
+    `Generating ${svgs.length} icon components from ${inputPath} to ${outputPath}`
+  );
 
   fs.mkdirpSync(`${outputPath}/${utilsPath}`);
 
@@ -19,9 +25,19 @@ export default async function(svgs: SvgDefinition[], outputPath: string) {
       (err: Error, svgContent: string) => {
         // svg-to-jsx is used for class components so we should replace any instance of this.props
         svgContent = svgContent.replace(/this.props/g, 'props');
+
+        // Determine what the output directory should be by matching the structure from the input path
+        const outputDirectory = `${outputPath}/${svgDefinition.path
+          .replace(inputPath, '')
+          .replace(svgDefinition.filename, '')}`;
+
+        // Create output directory if it doesn't yet exist
+        fs.mkdirpSync(outputDirectory);
+
+        // Write the generated component to the output path
         fs.writeFileSync(
-          `${outputPath}/${svgDefinition.name}.tsx`,
-          generateSVGComponent(svgDefinition.name, svgContent)
+          `${outputDirectory}${svgDefinition.metadata.name}.tsx`,
+          generateSVGComponent(svgDefinition.metadata.name, svgContent)
         );
       }
     );

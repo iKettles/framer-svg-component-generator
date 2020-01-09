@@ -1,17 +1,19 @@
 import { parse, stringify } from 'svgson';
+import * as path from 'path';
 
 export default async function(
-  filename: string,
+  filePath: string,
   svg: string
 ): Promise<SvgDefinition> {
   let parsedSvg = await parse(svg);
+  const filename = path.basename(filePath);
 
   const metadataDefinitions: MetadataDefinition = parsedSvg.children.find(
     (child: any) => child.name === 'metadata'
   );
 
   if (!metadataDefinitions) {
-    throw new Error(`Could not find metadata for ${filename}`);
+    throw new Error(`Could not find metadata for ${filePath}`);
   }
 
   // Filter metadata from SVG
@@ -21,7 +23,7 @@ export default async function(
 
   return metadataDefinitions.children.reduce<SvgDefinition>(
     (acc: any, definition) => {
-      acc[definition.name] = definition.children.map(child => {
+      acc.metadata[definition.name] = definition.children.map(child => {
         switch (definition.name) {
           case 'keywords':
             return parseKeywords(child.value);
@@ -33,7 +35,10 @@ export default async function(
     },
     {
       filename,
-      name: filename.replace('.svg', ''),
+      path: filePath,
+      metadata: {
+        name: filename.replace('.svg', '')
+      },
       svg: await stringify(parsedSvg)
     }
   ) as SvgDefinition;

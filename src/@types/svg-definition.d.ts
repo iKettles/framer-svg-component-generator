@@ -1,9 +1,12 @@
 declare interface SvgDefinition {
   filename: string;
-  name: string;
+  path: string;
   svg: string;
-  asset?: string;
-  description?: string;
-  keywords?: string[];
-  size?: string;
+  metadata: {
+    name: string;
+    asset?: string;
+    description?: string;
+    keywords?: string[];
+    size?: string;
+  };
 }
