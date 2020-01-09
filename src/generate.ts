@@ -29,7 +29,14 @@ export default async function(inputPath: string, outputPath: string) {
     `${outputPath}/schema.json`,
     JSON.stringify(
       output.map(definition => {
-        const { svg, ...rest } = definition;
+        const {
+          svg,
+          path,
+          filename,
+          outputDirectory,
+          relativeOutputDirectory,
+          ...rest
+        } = definition;
         return rest;
       }),
       null,

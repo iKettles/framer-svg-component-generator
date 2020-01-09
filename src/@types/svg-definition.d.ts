@@ -1,6 +1,7 @@
 declare interface SvgDefinition {
   filename: string;
   path: string;
+  id: string;
   outputDirectory: string;
   relativeOutputDirectory: string;
   svg: string;

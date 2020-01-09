@@ -9,6 +9,7 @@ export default async function(
 ): Promise<SvgDefinition> {
   let parsedSvg = await parse(svg);
   const filename = path.basename(filePath);
+  const name = filename.replace('.svg', '');
   const relativeOutputDirectory = `./${filePath
     .replace(inputPath, '')
     .replace(filename, '')}`;
@@ -39,6 +40,7 @@ export default async function(
       return acc;
     },
     {
+      id: `${relativeOutputDirectory.replace('./', '')}${name}`,
       filename,
       path: filePath,
       outputDirectory: `${outputPath}${
@@ -46,7 +48,7 @@ export default async function(
       }${relativeOutputDirectory}`,
       relativeOutputDirectory,
       metadata: {
-        name: filename.replace('.svg', '')
+        name
       },
       svg: await stringify(parsedSvg)
     }

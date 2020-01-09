@@ -68,12 +68,10 @@ addPropertyControls(${name}, {
 
 function generateGenericIconComponent(svgs: SvgDefinition[]) {
   const componentDescriptions = svgs.reduce<
-    Array<{ identifier: string; name: string; importPath: string }>
+    Array<{ id: string; name: string; importPath: string }>
   >((acc, svg) => {
     acc.push({
-      identifier: `${svg.relativeOutputDirectory.replace('./', '')}${
-        svg.metadata.name
-      }`,
+      id: svg.id,
       name: svg.metadata.name,
       importPath: `${svg.relativeOutputDirectory}${svg.metadata.name}`
     });
@@ -89,7 +87,7 @@ ${componentDescriptions.reduce<string>((acc, component) => {
 }, '')}
 
 const icons = {${componentDescriptions.reduce<string>((acc, component) => {
-    acc += `\n  "${component.identifier}": ${component.name},`;
+    acc += `\n  "${component.id}": ${component.name},`;
     return acc;
   }, '')}
 };
@@ -108,7 +106,7 @@ addPropertyControls(Icon, {
   icon: {
     type: ControlType.Enum,
     options: ${JSON.stringify(
-      componentDescriptions.map(component => component.identifier)
+      componentDescriptions.map(component => component.id)
     )}
   }
 });
