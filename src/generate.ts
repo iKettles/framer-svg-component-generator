@@ -14,7 +14,9 @@ export default async function(inputPath: string, outputPath: string) {
   for (const filePath of filePaths) {
     const svg = fs.readFileSync(`${filePath}`, 'utf8');
     try {
-      output.push(await generateSvgDefinition(filePath, svg));
+      output.push(
+        await generateSvgDefinition(filePath, svg, inputPath, outputPath)
+      );
     } catch (err) {
       console.error(`Failed to parse ${filePath}`, err);
       throw err;

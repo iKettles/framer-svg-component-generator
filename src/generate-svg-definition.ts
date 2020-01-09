@@ -3,10 +3,15 @@ import * as path from 'path';
 
 export default async function(
   filePath: string,
-  svg: string
+  svg: string,
+  inputPath: string,
+  outputPath: string
 ): Promise<SvgDefinition> {
   let parsedSvg = await parse(svg);
   const filename = path.basename(filePath);
+  const relativeOutputDirectory = `./${filePath
+    .replace(inputPath, '')
+    .replace(filename, '')}`;
 
   const metadataDefinitions: MetadataDefinition = parsedSvg.children.find(
     (child: any) => child.name === 'metadata'
@@ -36,6 +41,10 @@ export default async function(
     {
       filename,
       path: filePath,
+      outputDirectory: `${outputPath}${
+        outputPath.endsWith('/') ? '' : '/'
+      }${relativeOutputDirectory}`,
+      relativeOutputDirectory,
       metadata: {
         name: filename.replace('.svg', '')
       },
