@@ -3,6 +3,10 @@ import generateComponents from './generate-components';
 import generateSvgDefinition from './generate-svg-definition';
 
 export default async function(inputPath: string, outputPath: string) {
+  if (!fs.pathExistsSync(inputPath)) {
+    throw new Error(`Input path does not exist`);
+  }
+
   const svgFileNames = (fs.readdirSync(inputPath) as string[]).filter(
     name => name !== '.DS_Store'
   );
