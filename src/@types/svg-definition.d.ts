@@ -5,11 +5,10 @@ declare interface SvgDefinition {
   outputDirectory: string;
   relativeOutputDirectory: string;
   svg: string;
-  metadata: {
-    name: string;
-    asset?: string;
-    description?: string;
-    keywords?: string[];
-    size?: string;
-  };
+  metadata: SvgMetadata;
+}
+
+declare interface SvgMetadata {
+  name: string;
+  [key: string]: string | string[];
 }

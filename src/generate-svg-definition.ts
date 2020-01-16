@@ -18,18 +18,43 @@ export default async function(
     (child: any) => child.name === 'metadata'
   );
 
-  if (!metadataDefinitions) {
-    throw new Error(`Could not find metadata for ${filePath}`);
-  }
-
   // Filter metadata from SVG
   parsedSvg.children = parsedSvg.children.filter(
     (child: any) => child.name !== 'metadata'
   );
 
-  return metadataDefinitions.children.reduce<SvgDefinition>(
-    (acc: any, definition) => {
-      acc.metadata[definition.name] = definition.children.map(child => {
+  return {
+    id: `${relativeOutputDirectory.replace('./', '')}${name}`,
+    filename,
+    path: filePath,
+    outputDirectory: `${outputPath}${
+      outputPath.endsWith('/') ? '' : '/'
+    }${relativeOutputDirectory}`,
+    relativeOutputDirectory,
+    metadata: parseMetadata(name, metadataDefinitions),
+    svg: await stringify(parsedSvg)
+  } as SvgDefinition;
+}
+
+function parseKeywords(keywords: string): string[] {
+  return keywords
+    .split(',')
+    .map(value => value.trim())
+    .filter(value => !!value.length);
+}
+
+function parseMetadata(name: string, metadataDefinitions: any): SvgMetadata {
+  let toReturn: SvgMetadata = {
+    name
+  };
+
+  if (!metadataDefinitions) {
+    return toReturn;
+  }
+
+  return (metadataDefinitions.children as any[]).reduce<SvgMetadata>(
+    (acc, definition) => {
+      acc[definition.name] = definition.children.map((child: any) => {
         switch (definition.name) {
           case 'keywords':
             return parseKeywords(child.value);
@@ -39,25 +64,6 @@ export default async function(
       })[0];
       return acc;
     },
-    {
-      id: `${relativeOutputDirectory.replace('./', '')}${name}`,
-      filename,
-      path: filePath,
-      outputDirectory: `${outputPath}${
-        outputPath.endsWith('/') ? '' : '/'
-      }${relativeOutputDirectory}`,
-      relativeOutputDirectory,
-      metadata: {
-        name
-      },
-      svg: await stringify(parsedSvg)
-    }
-  ) as SvgDefinition;
-}
-
-function parseKeywords(keywords: string): string[] {
-  return keywords
-    .split(',')
-    .map(value => value.trim())
-    .filter(value => !!value.length);
+    toReturn
+  ) as SvgMetadata;
 }
