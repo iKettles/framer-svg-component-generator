@@ -4,5 +4,15 @@ declare module 'svgson' {
 }
 
 declare interface ParsedSvg {
-  children: any[];
+  children: ParsedSvgChild[];
+}
+
+declare interface ParsedSvgChild {
+  name: string;
+  type: string;
+  value: string;
+  attributes: {
+    [key: string]: string;
+  };
+  children: ParsedSvgChild[];
 }

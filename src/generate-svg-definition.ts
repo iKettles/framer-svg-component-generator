@@ -14,14 +14,17 @@ export default async function(
     .replace(inputPath, '')
     .replace(filename, '')}`;
 
-  const metadataDefinitions: MetadataDefinition = parsedSvg.children.find(
+  const metadataDefinitions = parsedSvg.children.find(
     (child: any) => child.name === 'metadata'
   );
 
   // Filter metadata from SVG
-  parsedSvg.children = parsedSvg.children.filter(
-    (child: any) => child.name !== 'metadata'
-  );
+  parsedSvg.children = parsedSvg.children.reduce((acc: any[], child: any) => {
+    if (child.name !== 'metadata') {
+      acc.push(recursivelyRemoveIrrelevantAttributes(child));
+    }
+    return acc;
+  }, []);
 
   return {
     id: `${relativeOutputDirectory.replace('./', '')}${name}`,
@@ -43,7 +46,10 @@ function parseKeywords(keywords: string): string[] {
     .filter(value => !!value.length);
 }
 
-function parseMetadata(name: string, metadataDefinitions: any): SvgMetadata {
+function parseMetadata(
+  name: string,
+  metadataDefinitions: ParsedSvgChild | undefined
+): SvgMetadata {
   let toReturn: SvgMetadata = {
     name
   };
@@ -66,4 +72,20 @@ function parseMetadata(name: string, metadataDefinitions: any): SvgMetadata {
     },
     toReturn
   ) as SvgMetadata;
+}
+
+function recursivelyRemoveIrrelevantAttributes(parsedSvgChild: ParsedSvgChild) {
+  const svgChildCopy = { ...parsedSvgChild };
+
+  if (svgChildCopy.attributes.hasOwnProperty('fill')) {
+    delete svgChildCopy.attributes.fill;
+  }
+
+  if (svgChildCopy.children.length > 0) {
+    svgChildCopy.children = svgChildCopy.children.map(
+      recursivelyRemoveIrrelevantAttributes
+    );
+  }
+
+  return svgChildCopy;
 }
