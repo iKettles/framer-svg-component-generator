@@ -6,6 +6,7 @@ declare interface SvgDefinition {
   relativeOutputDirectory: string;
   svg: string;
   metadata: SvgMetadata;
+  jsx?: string;
 }
 
 declare interface SvgMetadata {
