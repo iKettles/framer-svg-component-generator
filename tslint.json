@@ -1,42 +1,18 @@
 {
   "defaultSeverity": "error",
-  "extends": [
-    "tslint:recommended"
-  ],
+  "extends": ["tslint:recommended"],
   "jsRules": {},
   "rules": {
-    "quotemark": [
-      true,
-      "single",
-      "avoid-escape"
-    ],
-    "no-console": [
-      false
-    ],
+    "quotemark": [true, "single", "avoid-escape"],
+    "no-console": [false],
     "arrow-parens": false,
-    "no-consecutive-blank-lines": [
-      true,
-      2
-    ],
-    "member-access": [
-      false
-    ],
-    "ordered-imports": [
-      false
-    ],
-    "object-literal-sort-keys": [
-      false
-    ],
-    "trailing-comma": [
-      false
-    ],
-    "semicolon": [
-      true,
-      "always"
-    ],
-    "max-line-length": [
-      false
-    ],
+    "no-consecutive-blank-lines": [true, 2],
+    "member-access": [false],
+    "ordered-imports": [false],
+    "object-literal-sort-keys": [false],
+    "trailing-comma": [false],
+    "semicolon": [true, "always"],
+    "max-line-length": [false],
     "one-line": [
       true,
       "check-catch",
