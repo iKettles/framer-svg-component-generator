@@ -2,6 +2,7 @@ import { parse, stringify } from 'svgson';
 import * as path from 'path';
 import parseMetadata from './parseMetadata';
 import findAndAssignConfigurableFillAttributes from './configurableFillAttributes';
+import removeIrrelevantAttributes from './irrelevantAttributes';
 
 export default async function(
   filePath: string,
@@ -21,14 +22,19 @@ export default async function(
     (child: any) => child.name === 'metadata'
   );
 
-  parsedSvg.children = parsedSvg.children.reduce((acc: any[], child: any) => {
-    // Strip metadata so it won't be present in the generated output
-    if (child.name !== 'metadata') {
-      // Refine the SVG child (strip irrelevant attributes, add custom fill properties where relevant)
-      acc.push(refineSVGChild(child));
-    }
-    return acc;
-  }, []);
+  // Replace the children of this SVG with a refined version
+  parsedSvg.children = parsedSvg.children.reduce(
+    (acc: ParsedSvgChild[], child: any) => {
+      // Strip metadata so it won't be present in the generated output
+      if (child.name !== 'metadata') {
+        // Refine the SVG child (strip irrelevant attributes, add custom fill properties where relevant)
+        const [refinedChild] = refineSvgChild(child);
+        acc.push(refinedChild);
+      }
+      return acc;
+    },
+    []
+  );
 
   return {
     id: `${relativeOutputDirectory.replace('./', '')}${name}`,
@@ -43,12 +49,13 @@ export default async function(
   } as SvgDefinition;
 }
 
-function refineSVGChild(parsedSvgChild: ParsedSvgChild) {
+function refineSvgChild(parsedSvgChild: ParsedSvgChild): [ParsedSvgChild, any] {
   let svgChildCopy = { ...parsedSvgChild };
-  // let configurablePaths = {};
 
   // Remove all irrelevant attributes
-  svgChildCopy = recursivelyRemoveIrrelevantAttributes(svgChildCopy);
+  svgChildCopy = removeIrrelevantAttributes(svgChildCopy);
+
+  // FInd the configurable paths and attach the relevant attributes that can be configured
   const [
     svgChildWithConfigurableFillAttributes,
     configurablePaths
@@ -56,8 +63,5 @@ function refineSVGChild(parsedSvgChild: ParsedSvgChild) {
 
   svgChildCopy = svgChildWithConfigurableFillAttributes;
 
-  console.log(`configurablePaths`, svgChildWithConfigurableFillAttributes);
-  console.log(`configurablePaths`, configurablePaths);
-
-  return svgChildCopy;
+  return [svgChildCopy, configurablePaths];
 }

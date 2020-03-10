@@ -20,8 +20,10 @@ export default async function(inputPath: string, outputPath: string) {
     }
   }
 
+  // Create output directory if it doesn't yet exist
   fs.mkdirpSync(`${outputPath}`);
 
+  // Write the schema to the output path
   fs.writeFileSync(
     `${outputPath}/schema.json`,
     JSON.stringify(

@@ -1,5 +1,5 @@
 import * as fs from 'fs-extra';
-import * as svgToJsx from 'svg-to-jsx';
+import svgToJsx from 'svg-to-jsx';
 import generateGenericIconComponent from './genericIconComponent';
 import generateSVGComponent from './svgComponent';
 
@@ -13,8 +13,10 @@ export default async function(
   );
 
   for (const svgDefinition of svgs) {
+    // console.log(svgDefinition.svg);
     // Parse each SVG string into a JSX string
     svgDefinition.jsx = await parseSVGToJSX(svgDefinition.svg);
+    // console.log(svgDefinition.jsx);
 
     // Create output directory if it doesn't yet exist
     fs.mkdirpSync(svgDefinition.outputDirectory);

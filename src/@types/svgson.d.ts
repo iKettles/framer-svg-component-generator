@@ -11,6 +11,7 @@ declare interface ParsedSvgChild {
   name: string;
   type: string;
   value: string;
+  uniquePathName?: string;
   attributes: {
     [key: string]: string;
   };

@@ -1,4 +1,6 @@
-function recursivelyRemoveIrrelevantAttributes(parsedSvgChild: ParsedSvgChild) {
+export default function removeIrrelevantAttributes(
+  parsedSvgChild: ParsedSvgChild
+) {
   const svgChildCopy = { ...parsedSvgChild };
 
   if (svgChildCopy.attributes.hasOwnProperty('fill')) {
@@ -7,7 +9,7 @@ function recursivelyRemoveIrrelevantAttributes(parsedSvgChild: ParsedSvgChild) {
 
   if (svgChildCopy.children.length > 0) {
     svgChildCopy.children = svgChildCopy.children.map(
-      recursivelyRemoveIrrelevantAttributes
+      removeIrrelevantAttributes
     );
   }
 
