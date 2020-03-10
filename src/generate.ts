@@ -1,7 +1,6 @@
 import * as fs from 'fs-extra';
 import * as glob from 'glob';
-import generateComponents from './generate-components';
-import generateSvgDefinition from './generate-svg-definition';
+import generators from './generators';
 
 export default async function(inputPath: string, outputPath: string) {
   if (!fs.pathExistsSync(inputPath)) {
@@ -14,9 +13,7 @@ export default async function(inputPath: string, outputPath: string) {
   for (const filePath of filePaths) {
     const svg = fs.readFileSync(`${filePath}`, 'utf8');
     try {
-      output.push(
-        await generateSvgDefinition(filePath, svg, inputPath, outputPath)
-      );
+      output.push(await generators.svg(filePath, svg, inputPath, outputPath));
     } catch (err) {
       console.error(`Failed to parse ${filePath}`, err);
       throw err;
@@ -44,5 +41,5 @@ export default async function(inputPath: string, outputPath: string) {
     )
   );
 
-  await generateComponents(output, inputPath, outputPath);
+  await generators.components(output, inputPath, outputPath);
 }
