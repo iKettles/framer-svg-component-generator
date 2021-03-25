@@ -1,7 +1,7 @@
 import * as fs from 'fs-extra';
 import * as svgToJsx from 'svg-to-jsx';
 
-export default async function(
+export default async function (
   svgs: SvgDefinition[],
   inputPath: string,
   outputPath: string
@@ -16,7 +16,7 @@ export default async function(
     await svgToJsx(
       svgDefinition.svg,
       {
-        passProps: true
+        passProps: true,
       },
       (err: Error, svgContent: string) => {
         // svg-to-jsx is used for class components so we should replace any instance of this.props
@@ -61,6 +61,9 @@ addPropertyControls(${name}, {
     type: ControlType.Color,
     title: 'Fill',
     defaultValue: '#ffffff'
+  },
+  onClick: {
+    type: ControlType.EventHandler
   }
 });
   `;
@@ -73,7 +76,7 @@ function generateGenericIconComponent(svgs: SvgDefinition[]) {
     acc.push({
       id: svg.id,
       name: svg.metadata.name,
-      importPath: `${svg.relativeOutputDirectory}${svg.metadata.name}`
+      importPath: `${svg.relativeOutputDirectory}${svg.metadata.name}`,
     });
     return acc;
   }, []);
@@ -106,8 +109,11 @@ addPropertyControls(Icon, {
   icon: {
     type: ControlType.Enum,
     options: ${JSON.stringify(
-      componentDescriptions.map(component => component.id)
+      componentDescriptions.map((component) => component.id)
     )}
+  },
+  onClick: {
+    type: ControlType.EventHandler
   }
 });
     `;
