@@ -1,5 +1,6 @@
 import * as fs from 'fs-extra';
 import * as svgToJsx from 'svg-to-jsx';
+import * as path from 'path';
 
 export default async function (
   svgs: SvgDefinition[],
@@ -27,8 +28,8 @@ export default async function (
 
         // Write the generated component to the output path
         fs.writeFileSync(
-          `${svgDefinition.outputDirectory}${svgDefinition.metadata.name}.tsx`,
-          generateSVGComponent(svgDefinition.metadata.name, svgContent)
+          `${svgDefinition.outputDirectory}${svgDefinition.metadata.sanitizedName}.tsx`,
+          generateSVGComponent(svgDefinition.metadata.sanitizedName, svgContent)
         );
       }
     );
@@ -71,12 +72,21 @@ addPropertyControls(${name}, {
 
 function generateGenericIconComponent(svgs: SvgDefinition[]) {
   const componentDescriptions = svgs.reduce<
-    Array<{ id: string; name: string; importPath: string }>
+    Array<{
+      id: string;
+      name: string;
+      sanitizedName: string;
+      importPath: string;
+    }>
   >((acc, svg) => {
     acc.push({
       id: svg.id,
       name: svg.metadata.name,
-      importPath: `${svg.relativeOutputDirectory}${svg.metadata.name}`,
+      sanitizedName: svg.metadata.sanitizedName,
+      importPath: `./${path.join(
+        svg.relativeOutputDirectory,
+        svg.metadata.sanitizedName
+      )}`,
     });
     return acc;
   }, []);
@@ -85,12 +95,12 @@ function generateGenericIconComponent(svgs: SvgDefinition[]) {
 import * as React from 'react';
 import { addPropertyControls, ControlType } from 'framer';
 ${componentDescriptions.reduce<string>((acc, component) => {
-  acc += `import { ${component.name} } from "${component.importPath}";\n`;
+  acc += `import { ${component.sanitizedName} } from "${component.importPath}";\n`;
   return acc;
 }, '')}
 
 const icons = {${componentDescriptions.reduce<string>((acc, component) => {
-    acc += `\n  "${component.id}": ${component.name},`;
+    acc += `\n  "${component.id}": ${component.sanitizedName},`;
     return acc;
   }, '')}
 };

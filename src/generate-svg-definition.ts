@@ -1,7 +1,8 @@
 import { parse, stringify } from 'svgson';
+import { camelCase, startCase } from 'lodash';
 import * as path from 'path';
 
-export default async function(
+export default async function (
   filePath: string,
   svg: string,
   inputPath: string,
@@ -35,15 +36,15 @@ export default async function(
     }${relativeOutputDirectory}`,
     relativeOutputDirectory,
     metadata: parseMetadata(name, metadataDefinitions),
-    svg: await stringify(parsedSvg)
+    svg: await stringify(parsedSvg),
   } as SvgDefinition;
 }
 
 function parseKeywords(keywords: string): string[] {
   return keywords
     .split(',')
-    .map(value => value.trim())
-    .filter(value => !!value.length);
+    .map((value) => value.trim())
+    .filter((value) => !!value.length);
 }
 
 function parseMetadata(
@@ -51,7 +52,8 @@ function parseMetadata(
   metadataDefinitions: ParsedSvgChild | undefined
 ): SvgMetadata {
   let toReturn: SvgMetadata = {
-    name
+    name,
+    sanitizedName: sanitizeSVGName(name),
   };
 
   if (!metadataDefinitions) {
@@ -88,4 +90,16 @@ function recursivelyRemoveIrrelevantAttributes(parsedSvgChild: ParsedSvgChild) {
   }
 
   return svgChildCopy;
+}
+
+const reservedWords = ['Error'];
+
+function sanitizeSVGName(name: string) {
+  const sanitizedName = startCase(camelCase(name)).replace(/ /g, '');
+
+  if (reservedWords.includes(sanitizedName) || sanitizedName[0].match(/\d/g)) {
+    return `Icon${sanitizedName}`;
+  }
+
+  return sanitizedName;
 }

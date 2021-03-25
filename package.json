@@ -10,6 +10,7 @@
   "dependencies": {
     "fs-extra": "^8.1.0",
     "glob": "^7.1.6",
+    "lodash": "^4.17.21",
     "svg-to-jsx": "^1.0.2",
     "svgson": "^4.0.0",
     "yargs": "^15.1.0"
@@ -17,6 +18,7 @@
   "devDependencies": {
     "@types/fs-extra": "^8.0.1",
     "@types/glob": "^7.1.1",
+    "@types/lodash": "^4.14.168",
     "@types/node": "^12.12.17",
     "@types/xml-formatter": "^1.1.0",
     "@types/yargs": "^13.0.4",

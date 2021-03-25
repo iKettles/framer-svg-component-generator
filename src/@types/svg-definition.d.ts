@@ -10,5 +10,6 @@ declare interface SvgDefinition {
 
 declare interface SvgMetadata {
   name: string;
+  sanitizedName: string;
   [key: string]: string | string[];
 }
